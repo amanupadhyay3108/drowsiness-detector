@@ -9,13 +9,13 @@ import pandas as pd
 from datetime import datetime
 
 st.set_page_config(page_title="Mental Fatigue Detector", layout="centered")
-st.title("👁️ Eye Blink Pattern Detector")
+st.title("👁 Eye Blink Pattern Detector")
 st.markdown("Detect mental fatigue based on blink rate and eye closure duration.")
 
-# === Sidebar Settings ===
+# === Sidebar Settings (Updated for 30-second evaluation) ===
 ear_threshold = st.sidebar.slider("EAR Threshold", min_value=0.1, max_value=0.4, value=0.21, step=0.01)
-blink_threshold = st.sidebar.slider("Blinks per Minute Threshold", min_value=1, max_value=30, value=8, step=1)
-closure_frame_limit = st.sidebar.slider("Frames for Long Eye Closure", min_value=10, max_value=200, value=90, step=10)
+blink_threshold = st.sidebar.slider("Blinks per 30 Seconds Threshold", min_value=1, max_value=15, value=4, step=1)
+closure_frame_limit = st.sidebar.slider("Frames for Long Eye Closure", min_value=5, max_value=100, value=45, step=5)
 enable_audio = st.sidebar.checkbox("Enable Audio Alert", value=True)
 
 # === Function to calculate EAR ===
@@ -51,6 +51,7 @@ frame_placeholder = st.empty()
 status_placeholder = st.empty()
 chart_placeholder = st.empty()
 table_placeholder = st.empty()
+fatigue_alert_placeholder = st.empty()
 stop = st.button("Stop", key="stop_button_main")
 
 # === Logs ===
@@ -89,9 +90,9 @@ while cap.isOpened() and not stop:
                 blink_count += 1
             closed_eye_frames = 0
 
-        # === Fatigue evaluation every 60 sec ===
+        # === Fatigue evaluation every 30 sec ===
         elapsed_time = time.time() - start_time
-        if elapsed_time >= 60:
+        if elapsed_time >= 30:
             fatigue_by_blink = blink_count < blink_threshold
             fatigue_by_closure = closed_eye_frames > closure_frame_limit
 
@@ -99,8 +100,10 @@ while cap.isOpened() and not stop:
                 fatigue_status = "Fatigued 😴"
                 if enable_audio:
                     play_alert()
+                fatigue_alert_placeholder.warning("⚠️ Fatigue Detected! Please take a short break.")
             else:
                 fatigue_status = "Alert 🙂"
+                fatigue_alert_placeholder.success("✅ You are alert. Keep going!")
 
             timestamp = datetime.now().strftime("%H:%M:%S")
             log_data.append({
