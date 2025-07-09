@@ -10,7 +10,7 @@ This project uses webcam input to detect mental fatigue by tracking eye blinks a
 ![Live Feed](images/live_feed.png)
 
 ### 2. Fatigue Status and Blink Graph  
-![Fatigue Output](images/fatigue_Status.png)
+![Fatigue Output](images/fatigu_Status.png)
 
 ---
 
